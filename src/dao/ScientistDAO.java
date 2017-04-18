@@ -50,7 +50,7 @@ public class ScientistDAO {
 		return presentersList;
 	}
 
-	public static ScientistDTO getScientist(String EID) {
+	public static ScientistDTO getScientistByEID(String EID) {
 		Connection conn = null;
 		PreparedStatement pStmt = null;
 		ResultSet rs = null;

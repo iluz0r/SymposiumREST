@@ -26,7 +26,7 @@ public class PresentersResource {
 	@Path("{eid}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getScientist(@PathParam("eid") String EID) {
-		ScientistDTO scientistDTO = ScientistDAO.getScientist(EID);
+		ScientistDTO scientistDTO = ScientistDAO.getScientistByEID(EID);
 		Gson gson = new Gson();
 		String result = gson.toJson(scientistDTO);
 		return result;
