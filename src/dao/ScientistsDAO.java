@@ -10,9 +10,9 @@ import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 
 import dto.ScientistDTO;
 
-public class ScientistDAO {
+public class ScientistsDAO {
 
-	public ScientistDAO() {
+	public ScientistsDAO() {
 		
 	}
 	
@@ -61,6 +61,51 @@ public class ScientistDAO {
 		}
 		
 		return scientistsList;
+	}
+	
+	public ScientistDTO getScientist(String EID) {
+		MysqlDataSource dataSource = new MysqlDataSource();
+		dataSource.setUser("root");
+		dataSource.setPassword("");
+		dataSource.setServerName("localhost");
+		dataSource.setPort(3306);
+		dataSource.setDatabaseName("conferenceproj");
+
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rs = null;
+		ScientistDTO scientist = null;
+		
+		try {
+			conn = (Connection) dataSource.getConnection();
+			pStmt = conn.prepareStatement("SELECT * from scientist WHERE EID = '" + EID + "'");
+			rs = pStmt.executeQuery();
+			scientist = new ScientistDTO();
+			
+			while (rs.next()) {
+				scientist.setEID(rs.getString("EID"));
+				scientist.setFirstName(rs.getString("FirstName"));
+				scientist.setLastName(rs.getString("LastName"));
+				scientist.setPictureURL(rs.getString("Picture"));
+				scientist.setHindex(rs.getInt("Hindex"));
+				scientist.setDocumentCount(rs.getInt("DocumentCount"));
+				scientist.setCitedByCount(rs.getInt("CitedByCount"));
+				scientist.setCitationCount(rs.getInt("CitationCount"));
+				scientist.setEmail(rs.getString("Email"));
+				scientist.setPhone(rs.getString("Phone"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				rs.close();
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return scientist;
 	}
 
 }
