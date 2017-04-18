@@ -7,31 +7,29 @@ import javax.ws.rs.core.MediaType;
 
 import com.google.gson.Gson;
 
-import dao.ScientistsDAO;
+import dao.ScientistDAO;
 import dto.ScientistDTO;
 
-@Path("scientists")
-public class ScientistsResource {
-	
+@Path("presenters")
+public class PresentersResource {
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getScientists() {
-		ScientistsDAO scientistDAO = new ScientistsDAO();
-		ArrayList<ScientistDTO> scientistsList = scientistDAO.getAllScientists();
+		ArrayList<ScientistDTO> presentersList = ScientistDAO.getAllPresenters();
 		Gson gson = new Gson();
-		String result = gson.toJson(scientistsList);
+		String result = gson.toJson(presentersList);
 		return result;
 	}
-	
+
 	@GET
 	@Path("{eid}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getScientist(@PathParam("eid") String EID) {
-		ScientistsDAO scientistDAO = new ScientistsDAO();
-		ScientistDTO scientistDTO = scientistDAO.getScientist(EID);
+		ScientistDTO scientistDTO = ScientistDAO.getScientist(EID);
 		Gson gson = new Gson();
 		String result = gson.toJson(scientistDTO);
 		return result;
 	}
-	
+
 }

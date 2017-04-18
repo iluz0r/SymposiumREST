@@ -6,35 +6,23 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import com.mysql.jdbc.Connection;
-import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 
 import dto.ScientistDTO;
 
-public class ScientistsDAO {
+public class ScientistDAO {
 
-	public ScientistsDAO() {
-		
-	}
-	
-	public ArrayList<ScientistDTO> getAllScientists() {
-		MysqlDataSource dataSource = new MysqlDataSource();
-		dataSource.setUser("root");
-		dataSource.setPassword("");
-		dataSource.setServerName("localhost");
-		dataSource.setPort(3306);
-		dataSource.setDatabaseName("conferenceproj");
-
+	public static ArrayList<ScientistDTO> getAllPresenters() {
 		Connection conn = null;
 		PreparedStatement pStmt = null;
 		ResultSet rs = null;
-		ArrayList<ScientistDTO> scientistsList = null;
+		ArrayList<ScientistDTO> presentersList = null;
 
 		try {
-			conn = (Connection) dataSource.getConnection();
-			pStmt = conn.prepareStatement("SELECT * from scientist");
+			conn = (Connection) ConnectionManager.getConnection();
+			pStmt = conn.prepareStatement("SELECT * from scientist WHERE EID in (SELECT AuthorEID FROM presents)");
 			rs = pStmt.executeQuery();
-			scientistsList = new ArrayList<ScientistDTO>();
-			
+			presentersList = new ArrayList<ScientistDTO>();
+
 			while (rs.next()) {
 				ScientistDTO scientist = new ScientistDTO();
 				scientist.setEID(rs.getString("EID"));
@@ -47,7 +35,7 @@ public class ScientistsDAO {
 				scientist.setCitationCount(rs.getInt("CitationCount"));
 				scientist.setEmail(rs.getString("Email"));
 				scientist.setPhone(rs.getString("Phone"));
-				scientistsList.add(scientist);
+				presentersList.add(scientist);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -59,29 +47,21 @@ public class ScientistsDAO {
 				e.printStackTrace();
 			}
 		}
-		
-		return scientistsList;
+		return presentersList;
 	}
-	
-	public ScientistDTO getScientist(String EID) {
-		MysqlDataSource dataSource = new MysqlDataSource();
-		dataSource.setUser("root");
-		dataSource.setPassword("");
-		dataSource.setServerName("localhost");
-		dataSource.setPort(3306);
-		dataSource.setDatabaseName("conferenceproj");
 
+	public static ScientistDTO getScientist(String EID) {
 		Connection conn = null;
 		PreparedStatement pStmt = null;
 		ResultSet rs = null;
 		ScientistDTO scientist = null;
-		
+
 		try {
-			conn = (Connection) dataSource.getConnection();
+			conn = (Connection) ConnectionManager.getConnection();
 			pStmt = conn.prepareStatement("SELECT * from scientist WHERE EID = '" + EID + "'");
 			rs = pStmt.executeQuery();
 			scientist = new ScientistDTO();
-			
+
 			while (rs.next()) {
 				scientist.setEID(rs.getString("EID"));
 				scientist.setFirstName(rs.getString("FirstName"));
@@ -104,7 +84,6 @@ public class ScientistsDAO {
 				e.printStackTrace();
 			}
 		}
-		
 		return scientist;
 	}
 
