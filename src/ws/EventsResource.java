@@ -35,4 +35,15 @@ public class EventsResource {
 		return result;
 	}
 
+	/* DA METTERE NELLA DaysResource sotto /days/{date}/events */
+	@GET
+	@Path("date/{date}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getEventByDate(@PathParam("date") String date) {
+		ArrayList<EventDTO> eventsList = EventDAO.getAllEventsByDate(date);
+		Gson gson = new Gson();
+		String result = gson.toJson(eventsList);
+		return result;
+	}
+
 }

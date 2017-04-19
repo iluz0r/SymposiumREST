@@ -85,4 +85,42 @@ public class EventDAO {
 		return event;
 	}
 
+	public static ArrayList<EventDTO> getAllEventsByDate(String date) {
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rs = null;
+		ArrayList<EventDTO> eventsList = null;
+
+		try {
+			conn = (Connection) ConnectionManager.getConnection();
+			pStmt = conn.prepareStatement("SELECT * from event WHERE Date = '" + date + "'");
+			rs = pStmt.executeQuery();
+			eventsList = new ArrayList<EventDTO>();
+
+			while (rs.next()) {
+				EventDTO event = new EventDTO();
+				event.setID(rs.getString("ID"));
+				event.setDate(rs.getDate("Date"));
+				event.setStartTime(rs.getTime("StartTime"));
+				event.setEndTime(rs.getTime("EndTime"));
+				event.setName(rs.getString("Name"));
+				event.setDescription(rs.getString("Description"));
+				event.setLocationID(rs.getString("LocationID"));
+				event.setType(rs.getInt("Type"));
+				event.setChairEID(rs.getString("ChairEID"));
+				eventsList.add(event);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				rs.close();
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return eventsList;
+	}
+
 }
