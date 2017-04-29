@@ -8,6 +8,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import dao.DayDAO;
 import dto.DayDTO;
@@ -19,7 +20,7 @@ public class DaysResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getAllDays() {
 		ArrayList<DayDTO> daysList = DayDAO.getAllDays();
-		Gson gson = new Gson();
+		Gson gson = new GsonBuilder().setDateFormat("MMM d").create();
 		String result = gson.toJson(daysList);
 		return result;
 	}
