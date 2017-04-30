@@ -20,7 +20,7 @@ public class DatesResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getAllDates() {
 		ArrayList<Date> datesList = DateDAO.getAllDates();
-		Gson gson = new GsonBuilder().setDateFormat("MMM d").create();
+		Gson gson = new GsonBuilder().setDateFormat("EEE d").create();
 		String result = gson.toJson(datesList);
 		return result;
 	}
