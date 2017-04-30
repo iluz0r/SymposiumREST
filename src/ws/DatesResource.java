@@ -1,5 +1,6 @@
 package ws;
 
+import java.sql.Date;
 import java.util.ArrayList;
 
 import javax.ws.rs.GET;
@@ -10,18 +11,17 @@ import javax.ws.rs.core.MediaType;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import dao.DayDAO;
-import dto.DayDTO;
+import dao.DateDAO;
 
-@Path("days")
-public class DaysResource {
+@Path("dates")
+public class DatesResource {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getAllDays() {
-		ArrayList<DayDTO> daysList = DayDAO.getAllDays();
+	public String getAllDates() {
+		ArrayList<Date> datesList = DateDAO.getAllDates();
 		Gson gson = new GsonBuilder().setDateFormat("MMM d").create();
-		String result = gson.toJson(daysList);
+		String result = gson.toJson(datesList);
 		return result;
 	}
 

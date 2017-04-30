@@ -1,5 +1,6 @@
 package dao;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -7,27 +8,23 @@ import java.util.ArrayList;
 
 import com.mysql.jdbc.Connection;
 
-import dto.DayDTO;
+public class DateDAO {
 
-public class DayDAO {
-
-	public static ArrayList<DayDTO> getAllDays() {
+	public static ArrayList<Date> getAllDates() {
 		Connection conn = null;
 		PreparedStatement pStmt = null;
 		ResultSet rs = null;
-		ArrayList<DayDTO> daysList = null;
+		ArrayList<Date> daysList = null;
 
 		try {
 			conn = (Connection) ConnectionManager.getConnection();
-			pStmt = conn.prepareStatement("SELECT * from day");
+			pStmt = conn.prepareStatement("SELECT DISTINCT Date from event");
 			rs = pStmt.executeQuery();
-			daysList = new ArrayList<DayDTO>();
+			daysList = new ArrayList<Date>();
 
 			while (rs.next()) {
-				DayDTO day = new DayDTO();
-				day.setDate(rs.getDate("Date"));
-				day.setOverview(rs.getString("Overview"));
-				daysList.add(day);
+				Date date = rs.getDate("Date");
+				daysList.add(date);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
