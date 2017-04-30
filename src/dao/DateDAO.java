@@ -18,7 +18,7 @@ public class DateDAO {
 
 		try {
 			conn = (Connection) ConnectionManager.getConnection();
-			pStmt = conn.prepareStatement("SELECT DISTINCT Date from event");
+			pStmt = conn.prepareStatement("SELECT DISTINCT Date from event ORDER BY Date");
 			rs = pStmt.executeQuery();
 			daysList = new ArrayList<Date>();
 
