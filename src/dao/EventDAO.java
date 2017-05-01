@@ -19,7 +19,7 @@ public class EventDAO {
 
 		try {
 			conn = (Connection) ConnectionManager.getConnection();
-			pStmt = conn.prepareStatement("SELECT * from event");
+			pStmt = conn.prepareStatement("SELECT * from event ORDER BY StartTime");
 			rs = pStmt.executeQuery();
 			eventsList = new ArrayList<EventDTO>();
 
