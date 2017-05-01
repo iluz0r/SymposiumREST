@@ -9,7 +9,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import dao.EventDAO;
 import dto.EventDTO;
@@ -21,7 +20,7 @@ public class EventsResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getAllEvents() {
 		ArrayList<EventDTO> eventsList = EventDAO.getAllEvents();
-		Gson gson = new GsonBuilder().setDateFormat("EEE d").create();
+		Gson gson = new Gson();
 		String result = gson.toJson(eventsList);
 		return result;
 	}

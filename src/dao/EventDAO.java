@@ -3,7 +3,9 @@ package dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import com.mysql.jdbc.Connection;
 
@@ -22,13 +24,15 @@ public class EventDAO {
 			pStmt = conn.prepareStatement("SELECT * from event ORDER BY StartTime");
 			rs = pStmt.executeQuery();
 			eventsList = new ArrayList<EventDTO>();
+			SimpleDateFormat sdfDate = new SimpleDateFormat("EEE d", Locale.US);
+			SimpleDateFormat sdfTime = new SimpleDateFormat("h:mm a");
 
 			while (rs.next()) {
 				EventDTO event = new EventDTO();
 				event.setID(rs.getString("ID"));
-				event.setDate(rs.getDate("Date"));
-				event.setStartTime(rs.getTime("StartTime"));
-				event.setEndTime(rs.getTime("EndTime"));
+				event.setDate(sdfDate.format(rs.getDate("Date")));
+				event.setStartTime(sdfTime.format(rs.getTime("StartTime")));
+				event.setEndTime(sdfTime.format(rs.getTime("EndTime")));
 				event.setName(rs.getString("Name"));
 				event.setDescription(rs.getString("Description"));
 				event.setLocationID(rs.getString("LocationID"));
@@ -60,12 +64,14 @@ public class EventDAO {
 			pStmt = conn.prepareStatement("SELECT * from event WHERE ID = '" + ID + "'");
 			rs = pStmt.executeQuery();
 			event = new EventDTO();
+			SimpleDateFormat sdfDate = new SimpleDateFormat("EEE d", Locale.US);
+			SimpleDateFormat sdfTime = new SimpleDateFormat("h:mm a");
 
 			if (rs.next()) {
 				event.setID(rs.getString("ID"));
-				event.setDate(rs.getDate("Date"));
-				event.setStartTime(rs.getTime("StartTime"));
-				event.setEndTime(rs.getTime("EndTime"));
+				event.setDate(sdfDate.format(rs.getDate("Date")));
+				event.setStartTime(sdfTime.format(rs.getTime("StartTime")));
+				event.setEndTime(sdfTime.format(rs.getTime("EndTime")));
 				event.setName(rs.getString("Name"));
 				event.setDescription(rs.getString("Description"));
 				event.setLocationID(rs.getString("LocationID"));
@@ -90,6 +96,8 @@ public class EventDAO {
 		PreparedStatement pStmt = null;
 		ResultSet rs = null;
 		ArrayList<EventDTO> eventsList = null;
+		SimpleDateFormat sdfDate = new SimpleDateFormat("EEE d", Locale.US);
+		SimpleDateFormat sdfTime = new SimpleDateFormat("h:mm a");
 
 		try {
 			conn = (Connection) ConnectionManager.getConnection();
@@ -100,9 +108,9 @@ public class EventDAO {
 			while (rs.next()) {
 				EventDTO event = new EventDTO();
 				event.setID(rs.getString("ID"));
-				event.setDate(rs.getDate("Date"));
-				event.setStartTime(rs.getTime("StartTime"));
-				event.setEndTime(rs.getTime("EndTime"));
+				event.setDate(sdfDate.format(rs.getDate("Date")));
+				event.setStartTime(sdfTime.format(rs.getTime("StartTime")));
+				event.setEndTime(sdfTime.format(rs.getTime("EndTime")));
 				event.setName(rs.getString("Name"));
 				event.setDescription(rs.getString("Description"));
 				event.setLocationID(rs.getString("LocationID"));

@@ -1,14 +1,11 @@
 package dto;
 
-import java.sql.Date;
-import java.sql.Time;
-
 public class EventDTO {
 
 	private String ID;
-	private Date date;
-	private Time startTime;
-	private Time endTime;
+	private String date;
+	private String startTime;
+	private String endTime;
 	private String name;
 	private String description;
 	private String locationID;
@@ -26,27 +23,27 @@ public class EventDTO {
 		ID = iD;
 	}
 
-	public Date getDate() {
+	public String getDate() {
 		return date;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(String date) {
 		this.date = date;
 	}
 
-	public Time getStartTime() {
+	public String getStartTime() {
 		return startTime;
 	}
 
-	public void setStartTime(Time startTime) {
+	public void setStartTime(String startTime) {
 		this.startTime = startTime;
 	}
 
-	public Time getEndTime() {
+	public String getEndTime() {
 		return endTime;
 	}
 
-	public void setEndTime(Time endTime) {
+	public void setEndTime(String endTime) {
 		this.endTime = endTime;
 	}
 
