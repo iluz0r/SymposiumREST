@@ -19,7 +19,7 @@ public class LocationDAO {
 
 		try {
 			conn = (Connection) ConnectionManager.getConnection();
-			pStmt = conn.prepareStatement("SELECT DISTINCT Date from event ORDER BY Date");
+			pStmt = conn.prepareStatement("SELECT * FROM location");
 			rs = pStmt.executeQuery();
 			locationsList = new ArrayList<LocationDTO>();
 
