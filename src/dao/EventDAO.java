@@ -25,7 +25,7 @@ public class EventDAO {
 			rs = pStmt.executeQuery();
 			eventsList = new ArrayList<EventDTO>();
 			SimpleDateFormat sdfDate = new SimpleDateFormat("EEE d", Locale.US);
-			SimpleDateFormat sdfTime = new SimpleDateFormat("h:mm a");
+			SimpleDateFormat sdfTime = new SimpleDateFormat("hh:mm a");
 
 			while (rs.next()) {
 				EventDTO event = new EventDTO();
