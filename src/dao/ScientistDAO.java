@@ -164,5 +164,46 @@ public class ScientistDAO {
 		}
 		return scientist;
 	}
-	
+
+	public static ArrayList<ScientistDTO> getAllPresentersByPaperID(String paperID) {
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rs = null;
+		ArrayList<ScientistDTO> scientistList = null;
+
+		try {
+			conn = (Connection) ConnectionManager.getConnection();
+			pStmt = conn.prepareStatement(
+					"SELECT * from scientist WHERE EID in (SELECT AuthorEID FROM presents WHERE PaperID = '" + paperID
+							+ "')");
+			rs = pStmt.executeQuery();
+			scientistList = new ArrayList<ScientistDTO>();
+
+			while (rs.next()) {
+				ScientistDTO scientist = new ScientistDTO();
+				scientist.setEID(rs.getString("EID"));
+				scientist.setFirstName(rs.getString("FirstName"));
+				scientist.setLastName(rs.getString("LastName"));
+				scientist.setPictureURL(rs.getString("Picture"));
+				scientist.setHindex(rs.getInt("Hindex"));
+				scientist.setDocumentCount(rs.getInt("DocumentCount"));
+				scientist.setCitedByCount(rs.getInt("CitedByCount"));
+				scientist.setCitationCount(rs.getInt("CitationCount"));
+				scientist.setEmail(rs.getString("Email"));
+				scientist.setPhone(rs.getString("Phone"));
+				scientistList.add(scientist);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				rs.close();
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return scientistList;
+	}
+
 }
