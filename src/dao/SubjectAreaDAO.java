@@ -19,7 +19,7 @@ public class SubjectAreaDAO {
 
 		try {
 			conn = (Connection) ConnectionManager.getConnection();
-			pStmt = conn.prepareStatement("SELECT * from subjectareas");
+			pStmt = conn.prepareStatement("SELECT * from subjectarea");
 			rs = pStmt.executeQuery();
 			subjectAreasList = new ArrayList<SubjectAreaDTO>();
 
