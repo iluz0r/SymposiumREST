@@ -10,7 +10,7 @@ import javax.ws.rs.core.MediaType;
 import com.google.gson.Gson;
 
 import dao.ScientistDAO;
-import dto.ScientistDTO;
+import dto.ChairDTO;
 
 @Path("chairs")
 public class ChairsResource {
@@ -18,7 +18,7 @@ public class ChairsResource {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getAllChairs() {
-		ArrayList<ScientistDTO> chairsList = ScientistDAO.getAllChairs();
+		ArrayList<ChairDTO> chairsList = ScientistDAO.getAllChairs();
 		Gson gson = new Gson();
 		String result = gson.toJson(chairsList);
 		return result;

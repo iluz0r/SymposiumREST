@@ -7,8 +7,8 @@ import java.util.ArrayList;
 
 import com.mysql.jdbc.Connection;
 
+import dto.ChairDTO;
 import dto.PresenterDTO;
-import dto.ScientistDTO;
 
 public class ScientistDAO {
 
@@ -132,32 +132,46 @@ public class ScientistDAO {
 		return speakersList;
 	}
 
-	public static ArrayList<ScientistDTO> getAllChairs() {
+	public static ArrayList<ChairDTO> getAllChairs() {
 		Connection conn = null;
 		PreparedStatement pStmt = null;
 		ResultSet rs = null;
-		ArrayList<ScientistDTO> chairsList = null;
+		ArrayList<ChairDTO> chairsList = null;
 
 		try {
 			conn = (Connection) ConnectionManager.getConnection();
 			pStmt = conn.prepareStatement(
-					"SELECT * from scientist WHERE EID in (SELECT ChairEID from event WHERE Type != '2')");
+					"SELECT * FROM ((scientist INNER JOIN isaffiliatedwith ON scientist.EID = isaffiliatedwith.ScientistEID) INNER JOIN hassubjectareas ON scientist.EID = hassubjectareas.ScientistEID) WHERE EID in (SELECT ChairEID from event WHERE Type != 2)");
 			rs = pStmt.executeQuery();
-			chairsList = new ArrayList<ScientistDTO>();
+			chairsList = new ArrayList<ChairDTO>();
 
 			while (rs.next()) {
-				ScientistDTO chair = new ScientistDTO();
-				chair.setEID(rs.getString("EID"));
-				chair.setFirstName(rs.getString("FirstName"));
-				chair.setLastName(rs.getString("LastName"));
-				chair.setPictureURL(rs.getString("Picture"));
-				chair.setHindex(rs.getInt("Hindex"));
-				chair.setDocumentCount(rs.getInt("DocumentCount"));
-				chair.setCitedByCount(rs.getInt("CitedByCount"));
-				chair.setCitationCount(rs.getInt("CitationCount"));
-				chair.setEmail(rs.getString("Email"));
-				chair.setPhone(rs.getString("Phone"));
-				chairsList.add(chair);
+				boolean exists = false;
+				for (ChairDTO c : chairsList) {
+					if (c.getEID().equals(rs.getString("EID"))) {
+						String affiliationID = rs.getString("AffiliationID");
+						String subjectAreaID = rs.getString("SubjectAreaID");
+						if (!c.getAffiliationsID().contains(affiliationID))
+							c.getAffiliationsID().add(affiliationID);
+						if (!c.getSubjectAreasID().contains(subjectAreaID))
+							c.getSubjectAreasID().add(subjectAreaID);
+						exists = true;
+					}
+				}
+				if (!exists) {
+					ChairDTO chair = new ChairDTO();
+					chair.setEID(rs.getString("EID"));
+					chair.setFirstName(rs.getString("FirstName"));
+					chair.setLastName(rs.getString("LastName"));
+					chair.setPictureURL(rs.getString("Picture"));
+					chair.setHindex(rs.getInt("Hindex"));
+					chair.setDocumentCount(rs.getInt("DocumentCount"));
+					chair.setCitedByCount(rs.getInt("CitedByCount"));
+					chair.setCitationCount(rs.getInt("CitationCount"));
+					chair.setEmail(rs.getString("Email"));
+					chair.setPhone(rs.getString("Phone"));
+					chairsList.add(chair);
+				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
