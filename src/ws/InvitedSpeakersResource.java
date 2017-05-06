@@ -10,18 +10,18 @@ import javax.ws.rs.core.MediaType;
 import com.google.gson.Gson;
 
 import dao.ScientistDAO;
-import dto.ScientistDTO;
+import dto.SpeakerDTO;
 
 @Path("invitedspeakers")
 public class InvitedSpeakersResource {
-	
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getAllInvitedSpeakers() {
-		ArrayList<ScientistDTO> speakersList = ScientistDAO.getAllInvitedSpeakers();
+		ArrayList<SpeakerDTO> speakersList = ScientistDAO.getAllInvitedSpeakers();
 		Gson gson = new Gson();
 		String result = gson.toJson(speakersList);
 		return result;
 	}
-	
+
 }

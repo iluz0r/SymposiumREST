@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import com.mysql.jdbc.Connection;
 
 import dto.PresenterDTO;
-import dto.ScientistDTO;
+import dto.SpeakerDTO;
 
 public class ScientistDAO {
 
@@ -21,7 +21,7 @@ public class ScientistDAO {
 		try {
 			conn = (Connection) ConnectionManager.getConnection();
 			pStmt = conn.prepareStatement(
-					"SELECT * FROM (((((scientist INNER JOIN presents ON scientist.EID = presents.AuthorEID) INNER JOIN isaffiliatedwith ON presents.AuthorEID = isaffiliatedwith.ScientistEID))INNER JOIN hassubjectareas ON presents.AuthorEID = hassubjectareas.ScientistEID))");
+					"SELECT * FROM (((((scientist INNER JOIN presents ON scientist.EID = presents.AuthorEID) INNER JOIN isaffiliatedwith ON presents.AuthorEID = isaffiliatedwith.ScientistEID)) INNER JOIN hassubjectareas ON presents.AuthorEID = hassubjectareas.ScientistEID)) WHERE EID in (SELECT AuthorEID from presents WHERE PaperID in (SELECT ID from Paper WHERE EventID in (SELECT ID FROM Event WHERE Type = 0)))");
 			rs = pStmt.executeQuery();
 			presentersList = new ArrayList<PresenterDTO>();
 
@@ -72,32 +72,52 @@ public class ScientistDAO {
 		return presentersList;
 	}
 
-	public static ArrayList<ScientistDTO> getAllInvitedSpeakers() {
+	public static ArrayList<SpeakerDTO> getAllInvitedSpeakers() {
 		Connection conn = null;
 		PreparedStatement pStmt = null;
 		ResultSet rs = null;
-		ArrayList<ScientistDTO> speakersList = null;
+		ArrayList<SpeakerDTO> speakersList = null;
 
 		try {
 			conn = (Connection) ConnectionManager.getConnection();
 			pStmt = conn.prepareStatement(
-					"SELECT * FROM scientist WHERE EID in (SELECT AuthorEID from presents WHERE PaperID in (SELECT ID from Paper WHERE EventID in (SELECT ID FROM Event WHERE Type = 1)))");
+					"SELECT * FROM (((((scientist INNER JOIN presents ON scientist.EID = presents.AuthorEID) INNER JOIN isaffiliatedwith ON presents.AuthorEID = isaffiliatedwith.ScientistEID)) INNER JOIN hassubjectareas ON presents.AuthorEID = hassubjectareas.ScientistEID)) WHERE EID in (SELECT AuthorEID from presents WHERE PaperID in (SELECT ID from Paper WHERE EventID in (SELECT ID FROM Event WHERE Type = 1)))");
 			rs = pStmt.executeQuery();
-			speakersList = new ArrayList<ScientistDTO>();
+			speakersList = new ArrayList<SpeakerDTO>();
 
 			while (rs.next()) {
-				ScientistDTO scientist = new ScientistDTO();
-				scientist.setEID(rs.getString("EID"));
-				scientist.setFirstName(rs.getString("FirstName"));
-				scientist.setLastName(rs.getString("LastName"));
-				scientist.setPictureURL(rs.getString("Picture"));
-				scientist.setHindex(rs.getInt("Hindex"));
-				scientist.setDocumentCount(rs.getInt("DocumentCount"));
-				scientist.setCitedByCount(rs.getInt("CitedByCount"));
-				scientist.setCitationCount(rs.getInt("CitationCount"));
-				scientist.setEmail(rs.getString("Email"));
-				scientist.setPhone(rs.getString("Phone"));
-				speakersList.add(scientist);
+				boolean exists = false;
+				for (SpeakerDTO s : speakersList) {
+					if (s.getEID().equals(rs.getString("EID"))) {
+						String paperID = rs.getString("PaperID");
+						String affiliationID = rs.getString("AffiliationID");
+						String subjectAreaID = rs.getString("SubjectAreaID");
+						if (!s.getPapersID().contains(paperID))
+							s.getPapersID().add(paperID);
+						if (!s.getAffiliationsID().contains(affiliationID))
+							s.getAffiliationsID().add(affiliationID);
+						if (!s.getSubjectAreasID().contains(subjectAreaID))
+							s.getSubjectAreasID().add(subjectAreaID);
+						exists = true;
+					}
+				}
+				if (!exists) {
+					SpeakerDTO speaker = new SpeakerDTO();
+					speaker.setEID(rs.getString("EID"));
+					speaker.setFirstName(rs.getString("FirstName"));
+					speaker.setLastName(rs.getString("LastName"));
+					speaker.setPictureURL(rs.getString("Picture"));
+					speaker.setHindex(rs.getInt("Hindex"));
+					speaker.setDocumentCount(rs.getInt("DocumentCount"));
+					speaker.setCitedByCount(rs.getInt("CitedByCount"));
+					speaker.setCitationCount(rs.getInt("CitationCount"));
+					speaker.setEmail(rs.getString("Email"));
+					speaker.setPhone(rs.getString("Phone"));
+					speaker.addPaperID(rs.getString("PaperID"));
+					speaker.addAffiliationID(rs.getString("AffiliationID"));
+					speaker.addSubjectAreaID(rs.getString("SubjectAreaID"));
+					speakersList.add(speaker);
+				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
