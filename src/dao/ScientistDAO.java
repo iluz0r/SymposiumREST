@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import com.mysql.jdbc.Connection;
 
 import dto.PresenterDTO;
-import dto.SpeakerDTO;
+import dto.ScientistDTO;
 
 public class ScientistDAO {
 
@@ -72,22 +72,22 @@ public class ScientistDAO {
 		return presentersList;
 	}
 
-	public static ArrayList<SpeakerDTO> getAllInvitedSpeakers() {
+	public static ArrayList<PresenterDTO> getAllInvitedSpeakers() {
 		Connection conn = null;
 		PreparedStatement pStmt = null;
 		ResultSet rs = null;
-		ArrayList<SpeakerDTO> speakersList = null;
+		ArrayList<PresenterDTO> speakersList = null;
 
 		try {
 			conn = (Connection) ConnectionManager.getConnection();
 			pStmt = conn.prepareStatement(
 					"SELECT * FROM (((((scientist INNER JOIN presents ON scientist.EID = presents.AuthorEID) INNER JOIN isaffiliatedwith ON presents.AuthorEID = isaffiliatedwith.ScientistEID)) INNER JOIN hassubjectareas ON presents.AuthorEID = hassubjectareas.ScientistEID)) WHERE EID in (SELECT AuthorEID from presents WHERE PaperID in (SELECT ID from Paper WHERE EventID in (SELECT ID FROM Event WHERE Type = 1)))");
 			rs = pStmt.executeQuery();
-			speakersList = new ArrayList<SpeakerDTO>();
+			speakersList = new ArrayList<PresenterDTO>();
 
 			while (rs.next()) {
 				boolean exists = false;
-				for (SpeakerDTO s : speakersList) {
+				for (PresenterDTO s : speakersList) {
 					if (s.getEID().equals(rs.getString("EID"))) {
 						String paperID = rs.getString("PaperID");
 						String affiliationID = rs.getString("AffiliationID");
@@ -102,7 +102,7 @@ public class ScientistDAO {
 					}
 				}
 				if (!exists) {
-					SpeakerDTO speaker = new SpeakerDTO();
+					PresenterDTO speaker = new PresenterDTO();
 					speaker.setEID(rs.getString("EID"));
 					speaker.setFirstName(rs.getString("FirstName"));
 					speaker.setLastName(rs.getString("LastName"));
@@ -130,6 +130,46 @@ public class ScientistDAO {
 			}
 		}
 		return speakersList;
+	}
+
+	public static ArrayList<ScientistDTO> getAllChairs() {
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rs = null;
+		ArrayList<ScientistDTO> chairsList = null;
+
+		try {
+			conn = (Connection) ConnectionManager.getConnection();
+			pStmt = conn.prepareStatement(
+					"SELECT * from scientist WHERE EID in (SELECT ChairEID from event WHERE Type != '2')");
+			rs = pStmt.executeQuery();
+			chairsList = new ArrayList<ScientistDTO>();
+
+			while (rs.next()) {
+				ScientistDTO chair = new ScientistDTO();
+				chair.setEID(rs.getString("EID"));
+				chair.setFirstName(rs.getString("FirstName"));
+				chair.setLastName(rs.getString("LastName"));
+				chair.setPictureURL(rs.getString("Picture"));
+				chair.setHindex(rs.getInt("Hindex"));
+				chair.setDocumentCount(rs.getInt("DocumentCount"));
+				chair.setCitedByCount(rs.getInt("CitedByCount"));
+				chair.setCitationCount(rs.getInt("CitationCount"));
+				chair.setEmail(rs.getString("Email"));
+				chair.setPhone(rs.getString("Phone"));
+				chairsList.add(chair);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				rs.close();
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return chairsList;
 	}
 
 }
