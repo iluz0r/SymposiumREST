@@ -8,26 +8,26 @@ import java.util.ArrayList;
 import com.mysql.jdbc.Connection;
 
 import dto.ChairDTO;
-import dto.PresenterDTO;
+import dto.AuthorDTO;
 
 public class ScientistDAO {
 
-	public static ArrayList<PresenterDTO> getAllPresenters() {
+	public static ArrayList<AuthorDTO> getAllPresenters() {
 		Connection conn = null;
 		PreparedStatement pStmt = null;
 		ResultSet rs = null;
-		ArrayList<PresenterDTO> presentersList = null;
+		ArrayList<AuthorDTO> presentersList = null;
 
 		try {
 			conn = (Connection) ConnectionManager.getConnection();
 			pStmt = conn.prepareStatement(
 					"SELECT * FROM (((((scientist INNER JOIN presents ON scientist.EID = presents.AuthorEID) INNER JOIN isaffiliatedwith ON presents.AuthorEID = isaffiliatedwith.ScientistEID)) INNER JOIN hassubjectareas ON presents.AuthorEID = hassubjectareas.ScientistEID)) WHERE EID in (SELECT AuthorEID from presents WHERE PaperID in (SELECT ID from Paper WHERE EventID in (SELECT ID FROM Event WHERE Type = 0)))");
 			rs = pStmt.executeQuery();
-			presentersList = new ArrayList<PresenterDTO>();
+			presentersList = new ArrayList<AuthorDTO>();
 
 			while (rs.next()) {
 				boolean exists = false;
-				for (PresenterDTO p : presentersList) {
+				for (AuthorDTO p : presentersList) {
 					if (p.getEID().equals(rs.getString("EID"))) {
 						String paperID = rs.getString("PaperID");
 						String affiliationID = rs.getString("AffiliationID");
@@ -42,7 +42,7 @@ public class ScientistDAO {
 					}
 				}
 				if (!exists) {
-					PresenterDTO presenter = new PresenterDTO();
+					AuthorDTO presenter = new AuthorDTO();
 					presenter.setEID(rs.getString("EID"));
 					presenter.setFirstName(rs.getString("FirstName"));
 					presenter.setLastName(rs.getString("LastName"));
@@ -72,22 +72,22 @@ public class ScientistDAO {
 		return presentersList;
 	}
 
-	public static ArrayList<PresenterDTO> getAllInvitedSpeakers() {
+	public static ArrayList<AuthorDTO> getAllInvitedSpeakers() {
 		Connection conn = null;
 		PreparedStatement pStmt = null;
 		ResultSet rs = null;
-		ArrayList<PresenterDTO> speakersList = null;
+		ArrayList<AuthorDTO> speakersList = null;
 
 		try {
 			conn = (Connection) ConnectionManager.getConnection();
 			pStmt = conn.prepareStatement(
 					"SELECT * FROM (((((scientist INNER JOIN presents ON scientist.EID = presents.AuthorEID) INNER JOIN isaffiliatedwith ON presents.AuthorEID = isaffiliatedwith.ScientistEID)) INNER JOIN hassubjectareas ON presents.AuthorEID = hassubjectareas.ScientistEID)) WHERE EID in (SELECT AuthorEID from presents WHERE PaperID in (SELECT ID from Paper WHERE EventID in (SELECT ID FROM Event WHERE Type = 1)))");
 			rs = pStmt.executeQuery();
-			speakersList = new ArrayList<PresenterDTO>();
+			speakersList = new ArrayList<AuthorDTO>();
 
 			while (rs.next()) {
 				boolean exists = false;
-				for (PresenterDTO s : speakersList) {
+				for (AuthorDTO s : speakersList) {
 					if (s.getEID().equals(rs.getString("EID"))) {
 						String paperID = rs.getString("PaperID");
 						String affiliationID = rs.getString("AffiliationID");
@@ -102,7 +102,7 @@ public class ScientistDAO {
 					}
 				}
 				if (!exists) {
-					PresenterDTO speaker = new PresenterDTO();
+					AuthorDTO speaker = new AuthorDTO();
 					speaker.setEID(rs.getString("EID"));
 					speaker.setFirstName(rs.getString("FirstName"));
 					speaker.setLastName(rs.getString("LastName"));
@@ -170,6 +170,8 @@ public class ScientistDAO {
 					chair.setCitationCount(rs.getInt("CitationCount"));
 					chair.setEmail(rs.getString("Email"));
 					chair.setPhone(rs.getString("Phone"));
+					chair.addAffiliationID(rs.getString("AffiliationID"));
+					chair.addSubjectAreaID(rs.getString("SubjectAreaID"));
 					chairsList.add(chair);
 				}
 			}
@@ -184,6 +186,66 @@ public class ScientistDAO {
 			}
 		}
 		return chairsList;
+	}
+
+	public static ArrayList<AuthorDTO> getAllAuthors() {
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rs = null;
+		ArrayList<AuthorDTO> authorsList = null;
+
+		try {
+			conn = (Connection) ConnectionManager.getConnection();
+			pStmt = conn.prepareStatement(
+					"SELECT * FROM (((((scientist INNER JOIN hasauthor ON scientist.EID = hasauthor.AuthorEID) INNER JOIN isaffiliatedwith ON hasauthor.AuthorEID = isaffiliatedwith.ScientistEID)) INNER JOIN hassubjectareas ON hasauthor.AuthorEID = hassubjectareas.ScientistEID))");
+			rs = pStmt.executeQuery();
+			authorsList = new ArrayList<AuthorDTO>();
+
+			while (rs.next()) {
+				boolean exists = false;
+				for (AuthorDTO a : authorsList) {
+					if (a.getEID().equals(rs.getString("EID"))) {
+						String paperID = rs.getString("PaperID");
+						String affiliationID = rs.getString("AffiliationID");
+						String subjectAreaID = rs.getString("SubjectAreaID");
+						if (!a.getAffiliationsID().contains(affiliationID))
+							a.getAffiliationsID().add(affiliationID);
+						if (!a.getSubjectAreasID().contains(subjectAreaID))
+							a.getSubjectAreasID().add(subjectAreaID);
+						if (!a.getPapersID().contains(paperID))
+							a.getPapersID().add(paperID);
+						exists = true;
+					}
+				}
+				if (!exists) {
+					AuthorDTO author = new AuthorDTO();
+					author.setEID(rs.getString("EID"));
+					author.setFirstName(rs.getString("FirstName"));
+					author.setLastName(rs.getString("LastName"));
+					author.setPictureURL(rs.getString("Picture"));
+					author.setHindex(rs.getInt("Hindex"));
+					author.setDocumentCount(rs.getInt("DocumentCount"));
+					author.setCitedByCount(rs.getInt("CitedByCount"));
+					author.setCitationCount(rs.getInt("CitationCount"));
+					author.setEmail(rs.getString("Email"));
+					author.setPhone(rs.getString("Phone"));
+					author.addPaperID(rs.getString("PaperID"));
+					author.addAffiliationID(rs.getString("AffiliationID"));
+					author.addSubjectAreaID(rs.getString("SubjectAreaID"));
+					authorsList.add(author);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				rs.close();
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return authorsList;
 	}
 
 }

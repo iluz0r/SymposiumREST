@@ -2,13 +2,13 @@ package dto;
 
 import java.util.ArrayList;
 
-public class PresenterDTO extends ScientistDTO {
+public class AuthorDTO extends ScientistDTO {
 
 	private ArrayList<String> papersID;
 	private ArrayList<String> affiliationsID;
 	private ArrayList<String> subjectAreasID;
 
-	public PresenterDTO() {
+	public AuthorDTO() {
 		papersID = new ArrayList<String>();
 		affiliationsID = new ArrayList<String>();
 		subjectAreasID = new ArrayList<String>();

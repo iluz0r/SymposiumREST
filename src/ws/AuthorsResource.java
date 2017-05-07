@@ -12,15 +12,15 @@ import com.google.gson.Gson;
 import dao.ScientistDAO;
 import dto.AuthorDTO;
 
-@Path("presenters")
-public class PresentersResource {
+@Path("authors")
+public class AuthorsResource {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getAllPresenters() {
-		ArrayList<AuthorDTO> presentersList = ScientistDAO.getAllPresenters();
+	public String getAllAuthors() {
+		ArrayList<AuthorDTO> authorsList = ScientistDAO.getAllAuthors();
 		Gson gson = new Gson();
-		String result = gson.toJson(presentersList);
+		String result = gson.toJson(authorsList);
 		return result;
 	}
 
