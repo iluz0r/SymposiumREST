@@ -24,7 +24,7 @@ public class EventDAO {
 			pStmt = conn.prepareStatement("SELECT * from event ORDER BY StartTime");
 			rs = pStmt.executeQuery();
 			eventsList = new ArrayList<EventDTO>();
-			SimpleDateFormat sdfDate = new SimpleDateFormat("EEE d", Locale.US);
+			SimpleDateFormat sdfDate = new SimpleDateFormat("MMM d, yyyy", Locale.US);
 			SimpleDateFormat sdfTime = new SimpleDateFormat("hh:mm a");
 
 			while (rs.next()) {
